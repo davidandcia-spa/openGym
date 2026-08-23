@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, ai-coach]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            api/package-lock.json
+
+      - name: Frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Frontend tests
+        working-directory: frontend
+        run: npm test
+
+      - name: Frontend build
+        working-directory: frontend
+        run: npm run build
+
+      - name: API dependencies
+        working-directory: api
+        run: npm ci
+
+      - name: API syntax
+        run: |
+          node --check api/server.js
+          node --check api/coach.js
+          node --check api/entry.js
