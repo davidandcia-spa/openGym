@@ -21,23 +21,21 @@ services:
         fi
     restart: "no"
 
-  # Passkey auth + per-user data (Node, no framework).
-  # image: prebuilt (docker compose pull). build: from source (docker compose up --build).
+  # Passkey auth + per-user data + AI Coach gateway.
+  # Build from this fork so the AI Coach code is always the code that runs.
   api:
-    image: ghcr.io/duartesantos8/opengym-api:latest
     build: ./api
     restart: unless-stopped
     env_file: .env
     environment:
-      - PORT=3000            # internal port (nginx proxies here) — do not change
+      - PORT=3000            # nginx proxies here; entry.js proxies upstream openGym API to :3001
       - DATA_DIR=/data
     volumes:
       - ./data:/data         # users, passkeys, per-user state, session secret — BACK THIS UP
 
-  # Builds the React frontend (multi-stage) and serves it, proxying /api → api
-  # and the exercise media from the shared volume. Single origin for passkeys.
+  # Builds this fork's React frontend and serves it, proxying /api → api.
+  # Single origin is required for passkeys.
   web:
-    image: ghcr.io/duartesantos8/opengym-web:latest
     build:
       context: .
       dockerfile: web/Dockerfile
