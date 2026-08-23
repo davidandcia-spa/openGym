@@ -48,7 +48,10 @@ export default function Home() {
   return <div className="narrow">
     <div className="hdr">
       <div><h1>{user ? t('Hi {0}', user.name) : 'openGym'}</h1><div className="sub">{today.toLocaleDateString(dateLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
-      <button className="iconbtn" onClick={() => nav('/settings')} aria-label={t('Settings')}><Icon name="gear" /></button>
+      <div className="row" style={{ gap: 6 }}>
+        <button className="iconbtn" onClick={() => nav('/coach')} aria-label="AI Coach"><Icon name="sparkles" /></button>
+        <button className="iconbtn" onClick={() => nav('/settings')} aria-label={t('Settings')}><Icon name="gear" /></button>
+      </div>
     </div>
 
     <div className="card">
@@ -71,6 +74,19 @@ export default function Home() {
         {S.active ? <span className="tag" style={{ color: 'var(--orange)', background: 'color-mix(in srgb,var(--orange) 16%,transparent)' }}>{t('Resume')}</span>
           : routine ? <span className="tag acc">{t('Start')}</span>
           : <Icon name="plus" className="chev" />}
+      </div>
+    </div>
+
+    <div className="card tappable" style={{ cursor: 'pointer', borderColor: 'var(--acc)' }} onClick={() => nav('/coach')}>
+      <div className="row between">
+        <div className="row" style={{ gap: 10, minWidth: 0 }}>
+          <span className="lrow-i"><Icon name="sparkles" /></span>
+          <div style={{ minWidth: 0 }}>
+            <div className="big" style={{ fontSize: 20 }}>AI Coach</div>
+            <div className="muted small">Pregunta qué entrenar hoy, revisa estancamientos o analiza tus últimas semanas.</div>
+          </div>
+        </div>
+        <Icon name="chevronRight" className="chev" />
       </div>
     </div>
 
@@ -97,7 +113,6 @@ export default function Home() {
       {bw ? <>
         <div className="row" style={{ gap: 8, alignItems: 'baseline' }}>
           <div className="big">{fmtNum(bw.w)} <span className="muted" style={{ fontSize: '1rem' }}>{S.unit}</span></div>
-          {/* only when it actually moved — an unchanged weight used to read as "− 0" */}
           {!!delta && (
             <span className="small row" style={{ gap: 2, fontWeight: 500, color: bwDeltaColor(delta, bw.w) }}>
               <Icon name={delta > 0 ? 'arrowUp' : 'arrowDown'} style={{ fontSize: 12 }} />
